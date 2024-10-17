@@ -38,7 +38,8 @@
 void testOpenDialogBox() {
     
     cam = new Camera();
-    
+    cam->setPosition(sf::Vector2f(screenWidth / 2.0f, screenHeight / 2.0f));
+
     OpenDialogBox* openDial = new OpenDialogBox("Load Map");
     
     while (window->isOpen())
@@ -61,7 +62,7 @@ void testOpenDialogBox() {
 
                 
                 if (openDial->fileSelected) {
-                    cout << openDial->getFilename() << "\n";
+                    cout << openDial->getPathfile() << "\n";
                     delete openDial;
                     openDial = nullptr;
                 }
