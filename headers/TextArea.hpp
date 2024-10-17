@@ -47,12 +47,12 @@ public:
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
 
-		rect.setPosition(position);
+		rect.setPosition(position.x + cam->position.x, position.y + cam->position.y);
 
 		sf::Vector2f textPos;
 		textPos.x = position.x + float(text.getCharacterSize()) * 0.15f;
 		textPos.y = position.y;
-		text.setPosition(textPos);
+		text.setPosition(textPos.x+cam->position.x, textPos.y+cam->position.y);
 	}
 
 	void setCharacterSize(short val) {
