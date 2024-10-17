@@ -37,27 +37,27 @@ public:
         this->scrollLength = scrollLength;
 
         pressed = false;
-        
+
         // create bar
         bar = sf::RectangleShape(size);
         bar.setFillColor(sf::Color::Blue);
-        bar.setPosition(position);
+        bar.setPosition(position.x+cam->position.x, position.y+cam->position.y);
 
         barTop = sf::Sprite();
         barTop.setTexture(*getTexture("GUI/scrollbar/bar_top")->texture);
-        barTop.setPosition(position.x, position.y);
+        barTop.setPosition(position.x+cam->position.x, position.y + cam->position.y);
         barTop.setScale(bar.getSize().x / 16.0f, bar.getSize().x / 16.0f);
 
         barCenter = sf::Sprite();
         barCenter.setTexture(*getTexture("GUI/scrollbar/bar_center")->texture);
-        barCenter.setPosition(position.x, position.y + scroll.getSize().x);
+        barCenter.setPosition(position.x + cam->position.x, position.y + cam->position.y + scroll.getSize().x);
         barCenter.setScale(bar.getSize().x / 16.0f, (bar.getSize().y - 2.0f * bar.getSize().x) / 16.0f);
 
         barBottom = sf::Sprite();
         barBottom.setTexture(*getTexture("GUI/scrollbar/bar_bottom")->texture);
-        barBottom.setPosition(position.x, position.y + bar.getSize().y - bar.getSize().x);
+        barBottom.setPosition(position.x + cam->position.x, position.y + cam->position.y + bar.getSize().y - bar.getSize().x);
         barBottom.setScale(bar.getSize().x / 16.0f, bar.getSize().x / 16.0f);
-        
+
         // create scroll
         sf::Vector2f scrollPosition;
         scrollPosition.x = position.x;
@@ -66,23 +66,23 @@ public:
         scroll = sf::RectangleShape(sf::Vector2f(size.x, getScrollHeight()));
         scroll.setOrigin(0, 0);
         scroll.setFillColor(sf::Color::Red);
-        scroll.setPosition(scrollPosition);
+        scroll.setPosition(scrollPosition.x + cam->position.x, scrollPosition.y + cam->position.y);
 
         scrollTop = sf::Sprite();
         scrollTop.setTexture(*getTexture("GUI/scrollbar/scroll_top")->texture);
-        scrollTop.setPosition(scrollPosition.x, scrollPosition.y);
+        scrollTop.setPosition(scrollPosition.x + cam->position.x, scrollPosition.y + cam->position.y);
         scrollTop.setScale(scroll.getSize().x / 16.0f, scroll.getSize().x / 16.0f);
 
         scrollCenter = sf::Sprite();
         scrollCenter.setTexture(*getTexture("GUI/scrollbar/scroll_center")->texture);
-        scrollCenter.setPosition(scrollPosition.x, scrollPosition.y + scroll.getSize().x);
+        scrollCenter.setPosition(scrollPosition.x + cam->position.x, scrollPosition.y + cam->position.y + scroll.getSize().x);
         scrollCenter.setScale(scroll.getSize().x / 16.0f, (getScrollHeight() - 2.0f * scroll.getSize().x) / 16.0f);
 
         scrollBottom = sf::Sprite();
         scrollBottom.setTexture(*getTexture("GUI/scrollbar/scroll_bottom")->texture);
-        scrollBottom.setPosition(scrollPosition.x, scrollPosition.y + getScrollHeight() - scroll.getSize().x);
+        scrollBottom.setPosition(scrollPosition.x + cam->position.x, scrollPosition.y + cam->position.y + getScrollHeight() - scroll.getSize().x);
         scrollBottom.setScale(scroll.getSize().x / 16.0f, scroll.getSize().x / 16.0f);
-        
+
     }
 
     ~Scrollbar() {
@@ -93,8 +93,8 @@ public:
 
         scrollValue = value;
 
-        if (scrollValue > maxValue-scrollLength+1)
-            scrollValue = maxValue-scrollLength+1;
+        if (scrollValue > maxValue - scrollLength + 1)
+            scrollValue = maxValue - scrollLength + 1;
 
         if (scrollValue < minValue)
             scrollValue = minValue;
@@ -104,8 +104,8 @@ public:
     float getScrollHeight() {
         if (maxValue - minValue + 1 >= scrollLength) {
             float height = scrollLength / maxValue * size.y;
-            if (height < size.x*3)
-                height = size.x*3;
+            if (height < size.x * 3)
+                height = size.x * 3;
 
             return height;
         }
@@ -114,12 +114,12 @@ public:
     }
 
     void update(sf::Event& event) {
-        
+
         // bar positioning
-        bar.setPosition(position);
-        barTop.setPosition(position.x, position.y);
-        barCenter.setPosition(position.x, position.y + scroll.getSize().x);
-        barBottom.setPosition(position.x, position.y + bar.getSize().y - bar.getSize().x);
+        bar.setPosition(position.x + cam->position.x, position.y + cam->position.y);
+        barTop.setPosition(position.x + cam->position.x, position.y + cam->position.y);
+        barCenter.setPosition(position.x+cam->position.x, position.y +cam->position.y+ scroll.getSize().x);
+        barBottom.setPosition(position.x+cam->position.x, position.y + cam->position.y+bar.getSize().y - bar.getSize().x);
 
         sf::Vector2f scrollPosition;
         scrollPosition.x = position.x;
@@ -136,8 +136,8 @@ public:
             }
         }
 
-        if( event.type == sf::Event::MouseButtonReleased ) {
-            if( event.mouseButton.button == sf::Mouse::Left ) {
+        if (event.type == sf::Event::MouseButtonReleased) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
                 pressed = false;
             }
         }
@@ -156,10 +156,10 @@ public:
         }
 
         // scroll positioning
-        scroll.setPosition(scrollPosition);
-        scrollTop.setPosition(scrollPosition.x, scrollPosition.y);
-        scrollCenter.setPosition(scrollPosition.x, scrollPosition.y + scroll.getSize().x);
-        scrollBottom.setPosition(scrollPosition.x, scrollPosition.y + getScrollHeight() - scroll.getSize().x);
+        scroll.setPosition(scrollPosition.x+cam->position.x, scrollPosition.y+cam->position.y);
+        scrollTop.setPosition(scrollPosition.x+cam->position.x, scrollPosition.y+cam->position.y);
+        scrollCenter.setPosition(scrollPosition.x+cam->position.x, scrollPosition.y + cam->position.y + scroll.getSize().x);
+        scrollBottom.setPosition(scrollPosition.x+cam->position.x, scrollPosition.y + cam->position.y + getScrollHeight() - scroll.getSize().x);
     }
 
     void draw() {
@@ -172,7 +172,7 @@ public:
         window->draw(scrollTop);
         window->draw(scrollCenter);
         window->draw(scrollBottom);
-        
+
     }
 };
 

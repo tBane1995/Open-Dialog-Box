@@ -40,7 +40,7 @@ bool sortkey(std::filesystem::directory_entry first, std::filesystem::directory_
 
 class OpenDialogBox {
 public:
-    sf::Vector2f position = sf::Vector2f(300, 300);
+    sf::Vector2f position = sf::Vector2f(0, 0);
     sf::RectangleShape rect;        // main big panel
     sf::RectangleShape titlebar;    // 
     TextArea* titleText;            //  
@@ -62,12 +62,12 @@ public:
     OpenDialogBox(string title) {
         rect = sf::RectangleShape(sf::Vector2f(512, 256 + 32));
         rect.setFillColor(sf::Color(64, 64, 64));
-        rect.setPosition(position.x - 256, position.y - 128 - 32);
+        rect.setPosition(position.x + cam->position.x - 256, position.y + cam->position.y - 128 - 16);
 
         titlebar = sf::RectangleShape(sf::Vector2f(512, 32));
         titlebar.setFillColor(sf::Color(48, 48, 48));
-        titlebar.setPosition(position.x - 256, position.y - 128 - 32);
-
+        titlebar.setPosition(position.x + cam->position.x- 256, position.y + cam->position.y - 128 - 32);
+         
         titleText = new TextArea(title);
         titleText->setCharacterSize(24);
         titleText->generateRect();
@@ -88,9 +88,9 @@ public:
         filenameText->setRectColor(sf::Color::Transparent);
         filenameText->setTextColor(textColor);
         pos.x = position.x - 256;
-        pos.y = position.y + 256 - 128 - filenameText->getSize().y + 4;
+        pos.y = position.y + 256 - 128 - filenameText->rect.getSize().y + 4;
         filenameText->setPosition(pos);
-        
+
         selectedFilenameText = new TextArea("");
         selectedFilenameText->setCharacterSize(24);
         selectedFilenameText->setRectColor(sf::Color(32, 32, 32));
@@ -103,13 +103,13 @@ public:
         submitButton = new TextButton("submit");
         submitButton->rect.setSize(sf::Vector2f(submitButton->rect.getSize().x, selectedFilenameText->getSize().y));
         pos.x = position.x + 256 - submitButton->rect.getSize().x / 2 - 4;
-        pos.y = position.y + 256 - 128 - 16 -1 + 4;
+        pos.y = position.y + 256 - 128 - 16 - 1 + 4;
         submitButton->setPosition(pos);
 
         submitbar = sf::RectangleShape(sf::Vector2f(512, selectedFilenameText->rect.getSize().y + 8));
         submitbar.setFillColor(sf::Color(48, 48, 48));
-        submitbar.setPosition(position.x - 256, position.y + 256 - 128 - 32 + 1);
-        
+        submitbar.setPosition(position.x +cam->position.x - 256, position.y + cam->position.y + 256 - 128 - 32 + 1);
+
         fileSelected = false;
     }
 
@@ -119,12 +119,12 @@ public:
         delete filenameText;
         delete selectedFilenameText;
         delete submitButton;
-        
+
         for (auto& t : texts)
             delete t;
 
         delete scrollbar;
-        
+
     }
 
     void clearTexts() {
@@ -132,7 +132,7 @@ public:
 
             textField[i] = sf::RectangleShape(sf::Vector2f(512, 32));
             textField[i].setFillColor(sf::Color::Transparent);
-            textField[i].setPosition(position.x - 256, position.y - 128 + i * 32);
+            textField[i].setPosition(position.x + cam->position.x -256, position.y +cam->position.y - 128 + i * 32);
 
             texts[i] = new TextArea("");
             texts[i]->setCharacterSize(20);
@@ -164,9 +164,10 @@ public:
 
     }
 
-    std::string getFilename() {
-
-        return selectedFilenameText->text.getString();
+    std::string getPathfile() {
+        string pathfile = current_path.string() + "\\" + selectedFilenameText->text.getString();
+        cout << pathfile << "\n";
+        return pathfile;
     }
 
     void update(sf::Event& event, float dt) {
@@ -177,13 +178,13 @@ public:
 
                 submitButton->click();
 
-                for (short i = 0; i < 7;i++) {
+                for (short i = 0; i < 7; i++) {
                     if (texts[i]->rect.getGlobalBounds().contains(worldMousePosition)) {
-                        
+
                         // LOAD THE DIRECTORY
                         if (i + short(scrollbar->scrollValue) < paths.size()) {
-                            
-                            if(!paths[i + short(scrollbar->scrollValue)].is_directory())
+
+                            if (!paths[i + short(scrollbar->scrollValue)].is_directory())
                                 selectedFilenameText->setString(texts[i]->s);
 
                             else {
@@ -194,10 +195,10 @@ public:
                                 loadScrollbar();
 
                             }
-                                
+
                         }
-                        
-                     }
+
+                    }
                 }
 
                 if (submitButton->state == buttonState::pressed) {
@@ -222,7 +223,7 @@ public:
                     icons[i].setTexture(*getTexture("GUI/icons/dictionary")->texture);
                 else
                     icons[i].setTexture(*getTexture("GUI/icons/file")->texture);
-                icons[i].setPosition(position.x - 256, position.y - 128 + i * 32);
+                icons[i].setPosition(position.x +cam->position.x- 256, position.y + cam->position.y - 128 + i * 32);
             }
         }
 
@@ -247,5 +248,7 @@ public:
 
     }
 };
+
+OpenDialogBox* loadDialogBox = nullptr;
 
 #endif
